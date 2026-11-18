@@ -1,0 +1,229 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+    --color-accent: 240 75 32;       /* #F04B20 */
+    --color-accent-hover: 217 62 21; /* #D93E15 */
+    --color-accent-light: 255 101 61;/* #FF653D */
+    --color-bg: 9 9 11;              /* #09090b */
+    --color-card: 20 20 24;          /* #141418 */
+    --color-surface: 27 27 34;       /* #1b1b22 */
+    --color-border: 45 45 55;        /* #2d2d37 */
+    --color-text: 255 255 255;       /* #ffffff */
+    --color-text-muted: 161 161 170; /* #a1a1aa */
+
+    --theme-accent: #F04B20;
+    --theme-accent-hover: #D93E15;
+    --theme-accent-light: #FF653D;
+    --theme-bg: #09090b;
+    --theme-card: #141418;
+    --theme-surface: #1b1b22;
+    --theme-border: #2d2d37;
+    --theme-text: #ffffff;
+    --theme-text-muted: #a1a1aa;
+  }
+
+  body {
+    background-color: rgb(var(--color-bg)) !important;
+    color: rgb(var(--color-text)) !important;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* Dynamic background overrides */
+  section, footer, main, .theme-bg, [class*="bg-\[\#09090b\]"], [class*="bg-\[\#09090B\]"] {
+    background-color: rgb(var(--color-bg)) !important;
+  }
+
+  /* Scrolled Navbar background */
+  header.bg-\[\#09090b\]\/90 {
+    background-color: rgb(var(--color-bg) / 0.9) !important;
+  }
+
+  /* Card Surfaces & Panels */
+  [class*="bg-\[\#141418\]"],
+  [class*="bg-\[\#16161a\]"],
+  [class*="bg-\[\#111114\]"],
+  [class*="bg-\[\#141417\]"],
+  [class*="bg-\[\#1a1a20\]"],
+  [class*="bg-\[\#0f0f13\]"],
+  [class*="bg-\[\#1d1d24\]"],
+  [class*="bg-\[\#16161c\]"],
+  [class*="bg-\[\#121215\]"],
+  [class*="bg-\[\#15151a\]"],
+  .card-theme {
+    background-color: rgb(var(--color-card)) !important;
+  }
+
+  /* Dynamic Card Gradients */
+  [class*="from-\[\#16161a\]"],
+  [class*="from-\[\#141417\]"],
+  [class*="from-\[\#19191e\]"] {
+    --tw-gradient-from: rgb(var(--color-surface)) var(--tw-gradient-from-position) !important;
+    --tw-gradient-to: rgb(var(--color-surface) / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+  }
+
+  [class*="via-\[\#111114\]"] {
+    --tw-gradient-to: rgb(var(--color-card) / 0) var(--tw-gradient-to-position) !important;
+    --tw-gradient-stops: var(--tw-gradient-from), rgb(var(--color-card)) var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
+  }
+
+  [class*="to-\[\#0b0b0d\]"],
+  [class*="to-\[\#0d0d10\]"],
+  [class*="to-\[\#121215\]"],
+  [class*="to-\[\#0f0f13\]"] {
+    --tw-gradient-to: rgb(var(--color-bg)) var(--tw-gradient-to-position) !important;
+  }
+
+  /* Dynamic Typography */
+  :is(h1, h2, h3, h4, h5, h6, .text-white, .text-zinc-100):not([class*="text-brand-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]):not(.text-transparent):not([class*="bg-clip-text"]) {
+    color: rgb(var(--color-text));
+  }
+
+  :is(.text-zinc-300, .text-zinc-400, .text-zinc-500):not([class*="text-brand-"]):not([class*="text-emerald-"]):not([class*="text-rose-"]) {
+    color: rgb(var(--color-text-muted));
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgb(var(--color-bg));
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border));
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-accent));
+  }
+}
+
+/* Editorial Serif & Display styles */
+.font-display {
+  font-family: 'Syne', 'Space Grotesk', sans-serif;
+}
+
+.font-editorial {
+  font-family: 'Syne', sans-serif;
+  letter-spacing: -0.04em;
+}
+
+/* Noise overlay */
+.bg-noise {
+  background-image: radial-gradient(rgba(240, 75, 32, 0.1) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.bg-grid-subtle {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Marquee continuous animations */
+@keyframes marquee-left {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-right {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+.animate-marquee-left {
+  display: flex;
+  width: max-content;
+  animation: marquee-left 32s linear infinite;
+}
+
+.animate-marquee-right {
+  display: flex;
+  width: max-content;
+  animation: marquee-right 32s linear infinite;
+}
+
+.animate-marquee-left:hover,
+.animate-marquee-right:hover {
+  animation-play-state: paused;
+}
+
+/* =========================================================================
+   PERFECT RESUME / CV PDF & PRINT STYLESHEET
+   Ensures 1-to-2 clean executive pages with crisp typography, zero dark box clipping
+   ========================================================================= */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm 12mm 10mm 12mm;
+  }
+
+  html, body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10.5pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Force hide all page chrome and background website sections */
+  header, nav, footer, main, #root > div > main, #root > div > header, #root > div > footer, .print-hide {
+    display: none !important;
+  }
+
+  /* Modal overlay reset */
+  #resume-modal-overlay {
+    position: static !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    display: block !important;
+    z-index: auto !important;
+  }
+
+  /* Resume document card reset */
+  #resume-document-card {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    height: auto !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Prevent awkward page break cuts across items */
+  .resume-section-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Links on print */
+  a {
+    color: #0f172a !important;
+    text-decoration: none !important;
+  }
+}
