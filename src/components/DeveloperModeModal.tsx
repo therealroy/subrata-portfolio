@@ -25,11 +25,23 @@ import {
   RefreshCw,
   Image as ImageIcon,
   Globe,
-  Github
+  Github,
+  Type
 } from 'lucide-react';
 import { usePortfolio } from '../context/PortfolioContext';
 import { SkillItem, ExperienceItem, ProjectItem, EducationItem } from '../types/portfolio';
-import { THEME_PRESETS, DEFAULT_THEME, PortfolioTheme, adjustHexBrightness, applyThemeToDocument } from '../utils/themeUtils';
+import { 
+  THEME_PRESETS, 
+  DEFAULT_THEME, 
+  PortfolioTheme, 
+  adjustHexBrightness, 
+  applyThemeToDocument,
+  FONT_PRESETS,
+  POPULAR_DISPLAY_FONTS,
+  POPULAR_SANS_FONTS,
+  POPULAR_MONO_FONTS,
+  FontPreset
+} from '../utils/themeUtils';
 
 export const DeveloperModeModal: React.FC = () => {
   const { 
@@ -66,7 +78,7 @@ export const DeveloperModeModal: React.FC = () => {
   const [authError, setAuthError] = useState('');
 
   // Admin active tab
-  const [activeTab, setActiveTab] = useState<'profile' | 'resume' | 'palette' | 'skills' | 'experience' | 'projects' | 'education'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'resume' | 'palette' | 'fonts' | 'skills' | 'experience' | 'projects' | 'education'>('profile');
   const [saveToast, setSaveToast] = useState(false);
 
   // Local draft states for editing
@@ -143,6 +155,40 @@ export const DeveloperModeModal: React.FC = () => {
   const handleResetTheme = () => {
     setThemeDraft({ ...DEFAULT_THEME });
     resetTheme();
+  };
+
+  const handleSelectFontPreset = (preset: FontPreset) => {
+    const updated: PortfolioTheme = {
+      ...themeDraft,
+      fontPresetId: preset.id,
+      fontDisplay: preset.display,
+      fontSans: preset.sans,
+      fontMono: preset.mono,
+    };
+    setThemeDraft(updated);
+    applyThemeToDocument(updated); // Instant live preview!
+  };
+
+  const handleFontChange = (layer: 'fontDisplay' | 'fontSans' | 'fontMono', fontName: string) => {
+    const updated: PortfolioTheme = {
+      ...themeDraft,
+      [layer]: fontName,
+      fontPresetId: 'custom',
+    };
+    setThemeDraft(updated);
+    applyThemeToDocument(updated); // Instant live preview!
+  };
+
+  const handleResetFonts = () => {
+    const updated: PortfolioTheme = {
+      ...themeDraft,
+      fontPresetId: 'obsidian-tech',
+      fontDisplay: 'Syne',
+      fontSans: 'Space Grotesk',
+      fontMono: 'JetBrains Mono',
+    };
+    setThemeDraft(updated);
+    applyThemeToDocument(updated); // Instant live preview!
   };
 
   const handleReset = () => {
@@ -317,6 +363,7 @@ export const DeveloperModeModal: React.FC = () => {
               { id: 'profile', label: 'Profile & Hero', icon: User },
               { id: 'resume', label: 'Resume / CV', icon: FileText },
               { id: 'palette', label: 'Color Palette', icon: Palette },
+              { id: 'fonts', label: 'Typography & Fonts', icon: Type },
               { id: 'skills', label: 'Technical Skills', icon: Code2, count: skillsDraft.length },
               { id: 'experience', label: 'Experience Timeline', icon: Briefcase, count: expDraft.length },
               { id: 'projects', label: 'Featured Projects', icon: Layers, count: projectsDraft.length },
@@ -1781,6 +1828,321 @@ export const DeveloperModeModal: React.FC = () => {
                         }}
                       >
                         Background Token: <span style={{ color: themeDraft.text }}>{themeDraft.background}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
+
+            {/* TYPOGRAPHY & FONTS TAB */}
+            {activeTab === 'fonts' && (
+              <div className="space-y-8 animate-fade-in">
+                {/* Intro Banner */}
+                <div className="p-5 rounded-2xl bg-gradient-to-r from-brand-orange/15 via-blue-500/10 to-emerald-500/10 border border-brand-orange/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Type className="w-5 h-5 text-brand-orange" />
+                      <h3 className="font-display font-bold text-base text-white">Dynamic Portfolio Typography Engine</h3>
+                      <span className="px-2 py-0.5 rounded-full bg-brand-orange/20 border border-brand-orange/40 text-brand-orange font-mono text-[10px] font-semibold">
+                        Real-time Live Preview
+                      </span>
+                    </div>
+                    <p className="text-xs text-zinc-300 font-mono">
+                      Switch font pairings or customize individual typography layers for Headings, Body Text, and Monospace Code. Changes reflect instantly across the entire live website!
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={handleResetFonts}
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-zinc-300 border border-white/10 text-xs font-mono transition-colors"
+                      title="Reset typography to default Obsidian Tech"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5 text-brand-orange" />
+                      <span>Reset Fonts</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateTheme(themeDraft);
+                        setSaveToast(true);
+                        setTimeout(() => setSaveToast(false), 3000);
+                      }}
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-brand-orange hover:bg-brand-orange-light text-white font-mono text-xs font-bold uppercase shadow-glow-orange transition-all"
+                    >
+                      <Save className="w-3.5 h-3.5" />
+                      <span>Apply & Save</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 1. Curated Font Pairings (Presets) */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-brand-orange" />
+                      <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-300">
+                        1. One-Click Curated Font Pairings
+                      </h4>
+                    </div>
+                    <span className="text-[11px] font-mono text-zinc-500">
+                      Click any pairing to preview in real-time
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                    {FONT_PRESETS.map((preset) => {
+                      const isSelected = themeDraft.fontPresetId === preset.id ||
+                        (themeDraft.fontDisplay === preset.display &&
+                         themeDraft.fontSans === preset.sans &&
+                         themeDraft.fontMono === preset.mono);
+
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => handleSelectFontPreset(preset)}
+                          className={`p-4 rounded-2xl border text-left transition-all relative overflow-hidden group flex flex-col justify-between h-48 ${
+                            isSelected
+                              ? 'border-brand-orange bg-brand-orange/10 shadow-glow-orange ring-1 ring-brand-orange/50'
+                              : 'border-white/10 bg-[#15151a] hover:border-white/20 hover:bg-white/5'
+                          }`}
+                        >
+                          <div>
+                            <div className="flex items-center justify-between mb-1.5">
+                              <span className="font-mono text-xs font-bold text-white group-hover:text-brand-orange transition-colors">
+                                {preset.name}
+                              </span>
+                              {isSelected && (
+                                <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-brand-orange text-white font-mono text-[9px] font-bold">
+                                  <Check className="w-2.5 h-2.5" /> Active
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="text-[10px] font-mono text-brand-orange uppercase mb-2">
+                              {preset.category}
+                            </div>
+
+                            {/* Actual Font Rendering Sample */}
+                            <div className="p-2.5 rounded-xl bg-black/60 border border-white/10 space-y-1 my-2">
+                              <div
+                                className="text-base font-bold text-white truncate"
+                                style={{ fontFamily: `"${preset.display}", sans-serif` }}
+                              >
+                                {preset.display}
+                              </div>
+                              <div
+                                className="text-xs text-zinc-300 truncate"
+                                style={{ fontFamily: `"${preset.sans}", sans-serif` }}
+                              >
+                                {preset.sans} body
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[10px] font-mono text-zinc-400">
+                            <span style={{ fontFamily: `"${preset.mono}", monospace` }}>
+                              {preset.mono}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 2. Bespoke Custom Font Tuner */}
+                <div className="space-y-4 p-5 rounded-2xl bg-black/40 border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-300 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-brand-orange animate-ping" />
+                      2. Bespoke Typography Layer Tuner
+                    </h4>
+                    <span className="text-[11px] font-mono text-zinc-400">
+                      Select curated web fonts or type any Google Font name
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Display / Heading Font */}
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+                      <div>
+                        <label className="text-xs font-mono font-bold text-white uppercase block mb-1">
+                          Headings & Display Font
+                        </label>
+                        <span className="text-[10px] font-mono text-zinc-400">
+                          Hero headline, section titles, case study titles
+                        </span>
+                      </div>
+
+                      <select
+                        value={themeDraft.fontDisplay || 'Syne'}
+                        onChange={(e) => handleFontChange('fontDisplay', e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono text-xs focus:border-brand-orange focus:outline-none"
+                      >
+                        {POPULAR_DISPLAY_FONTS.map((font) => (
+                          <option key={font} value={font} className="bg-zinc-900 text-white">
+                            {font}
+                          </option>
+                        ))}
+                      </select>
+
+                      <div>
+                        <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">
+                          Or Type Custom Font Name:
+                        </label>
+                        <input
+                          type="text"
+                          value={themeDraft.fontDisplay || ''}
+                          onChange={(e) => handleFontChange('fontDisplay', e.target.value)}
+                          placeholder="e.g. Syne, Orbitron, Cinzel"
+                          className="w-full px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 text-white font-mono text-xs focus:border-brand-orange focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Sans / Body Font */}
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+                      <div>
+                        <label className="text-xs font-mono font-bold text-white uppercase block mb-1">
+                          Body & Content Font
+                        </label>
+                        <span className="text-[10px] font-mono text-zinc-400">
+                          Paragraphs, descriptions, resume prose, bio
+                        </span>
+                      </div>
+
+                      <select
+                        value={themeDraft.fontSans || 'Space Grotesk'}
+                        onChange={(e) => handleFontChange('fontSans', e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono text-xs focus:border-brand-orange focus:outline-none"
+                      >
+                        {POPULAR_SANS_FONTS.map((font) => (
+                          <option key={font} value={font} className="bg-zinc-900 text-white">
+                            {font}
+                          </option>
+                        ))}
+                      </select>
+
+                      <div>
+                        <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">
+                          Or Type Custom Font Name:
+                        </label>
+                        <input
+                          type="text"
+                          value={themeDraft.fontSans || ''}
+                          onChange={(e) => handleFontChange('fontSans', e.target.value)}
+                          placeholder="e.g. Space Grotesk, Inter, Roboto"
+                          className="w-full px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 text-white font-mono text-xs focus:border-brand-orange focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Monospace / Code Font */}
+                    <div className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3">
+                      <div>
+                        <label className="text-xs font-mono font-bold text-white uppercase block mb-1">
+                          Monospace & Technical Font
+                        </label>
+                        <span className="text-[10px] font-mono text-zinc-400">
+                          Code snippets, terminal tags, skill labels, badges
+                        </span>
+                      </div>
+
+                      <select
+                        value={themeDraft.fontMono || 'JetBrains Mono'}
+                        onChange={(e) => handleFontChange('fontMono', e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-black/60 border border-white/10 text-white font-mono text-xs focus:border-brand-orange focus:outline-none"
+                      >
+                        {POPULAR_MONO_FONTS.map((font) => (
+                          <option key={font} value={font} className="bg-zinc-900 text-white">
+                            {font}
+                          </option>
+                        ))}
+                      </select>
+
+                      <div>
+                        <label className="text-[10px] font-mono text-zinc-500 uppercase block mb-1">
+                          Or Type Custom Font Name:
+                        </label>
+                        <input
+                          type="text"
+                          value={themeDraft.fontMono || ''}
+                          onChange={(e) => handleFontChange('fontMono', e.target.value)}
+                          placeholder="e.g. JetBrains Mono, Fira Code"
+                          className="w-full px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 text-white font-mono text-xs focus:border-brand-orange focus:outline-none"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. Interactive Typography Test Drive Preview */}
+                <div className="space-y-3">
+                  <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-zinc-300">
+                    3. Live Interactive Typography Test Drive
+                  </h4>
+
+                  <div className="p-6 sm:p-8 rounded-3xl bg-zinc-950 border border-white/10 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-brand-orange/10 rounded-full blur-[100px] pointer-events-none" />
+
+                    {/* Technical badge */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <span
+                        className="px-3 py-1 rounded-full text-xs font-bold tracking-wider uppercase border border-brand-orange/30 bg-brand-orange/10 text-brand-orange"
+                        style={{ fontFamily: `"${themeDraft.fontMono || 'JetBrains Mono'}", monospace` }}
+                      >
+                        ✦ 01 // ARCHITECTURAL TYPOGRAPHY SPEC
+                      </span>
+                    </div>
+
+                    {/* Headline */}
+                    <h2
+                      className="text-2xl sm:text-4xl font-black tracking-tight text-white mb-3"
+                      style={{ fontFamily: `"${themeDraft.fontDisplay || 'Syne'}", sans-serif` }}
+                    >
+                      Architecting Scalable .NET Backends & AI Copilots
+                    </h2>
+
+                    {/* Subtitle / Paragraph */}
+                    <p
+                      className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-3xl mb-6"
+                      style={{ fontFamily: `"${themeDraft.fontSans || 'Space Grotesk'}", sans-serif` }}
+                    >
+                      This live interactive test drive showcases how your selected fonts render together across headings, body prose, metadata chips, and action buttons. The typography is evaluated dynamically so you can inspect contrast, letterforms, and reading rhythm before applying.
+                    </p>
+
+                    {/* Code & Tokens bar */}
+                    <div
+                      className="p-3.5 rounded-xl bg-black/60 border border-white/10 mb-6 flex flex-wrap items-center gap-3 text-xs"
+                      style={{ fontFamily: `"${themeDraft.fontMono || 'JetBrains Mono'}", monospace` }}
+                    >
+                      <span className="text-brand-orange">var</span>
+                      <span className="text-zinc-200">typography</span>
+                      <span className="text-zinc-400">=</span>
+                      <span className="text-emerald-400">
+                        &#123; display: "{themeDraft.fontDisplay || 'Syne'}", sans: "{themeDraft.fontSans || 'Space Grotesk'}", mono: "{themeDraft.fontMono || 'JetBrains Mono'}" &#125;;
+                      </span>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        className="px-5 py-2.5 rounded-xl text-xs font-bold uppercase text-white shadow-glow-orange bg-brand-orange"
+                        style={{ fontFamily: `"${themeDraft.fontSans || 'Space Grotesk'}", sans-serif` }}
+                      >
+                        Sample Primary Button
+                      </button>
+
+                      <div
+                        className="ml-auto px-3.5 py-1.5 rounded-lg border border-white/10 bg-white/5 text-[11px] text-zinc-400"
+                        style={{ fontFamily: `"${themeDraft.fontMono || 'JetBrains Mono'}", monospace` }}
+                      >
+                        Active Font Tokens: <span className="text-white font-bold">{themeDraft.fontDisplay || 'Syne'}</span> / <span className="text-white font-bold">{themeDraft.fontSans || 'Space Grotesk'}</span>
                       </div>
                     </div>
                   </div>

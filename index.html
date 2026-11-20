@@ -14,7 +14,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Montserrat:wght@400;600;700;800;900&family=Orbitron:wght@500;700;800;900&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
 
     <!-- Immediate Theme Hydration Script to prevent flash on reload -->
     <script>
@@ -79,6 +79,17 @@
               r.style.setProperty('--theme-border', bord);
               r.style.setProperty('--theme-text', txt);
               r.style.setProperty('--theme-text-muted', txtMut);
+
+              var fontDisplay = t.fontDisplay || 'Syne';
+              var fontSans = t.fontSans || 'Space Grotesk';
+              var fontMono = t.fontMono || 'JetBrains Mono';
+
+              r.style.setProperty('--font-display', '"' + fontDisplay + '", "Space Grotesk", sans-serif');
+              r.style.setProperty('--font-sans', '"' + fontSans + '", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif');
+              r.style.setProperty('--font-mono', '"' + fontMono + '", monospace');
+              if (document.body) {
+                document.body.style.fontFamily = '"' + fontSans + '", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+              }
             }
           }
         } catch (e) {}

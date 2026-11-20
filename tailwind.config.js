@@ -33,9 +33,9 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Space Grotesk', 'Inter', 'sans-serif'],
-        display: ['Syne', 'Space Grotesk', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['var(--font-sans, "Space Grotesk")', 'Space Grotesk', 'Inter', 'sans-serif'],
+        display: ['var(--font-display, "Syne")', 'Syne', 'Space Grotesk', 'sans-serif'],
+        mono: ['var(--font-mono, "JetBrains Mono")', 'JetBrains Mono', 'monospace'],
       },
       boxShadow: {
         'glow-orange': '0 0 25px -4px rgb(var(--color-accent, 240 75 32) / 0.35)',

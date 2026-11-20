@@ -8,6 +8,11 @@ export interface PortfolioTheme {
   card: string;        // e.g. #141418
   text: string;        // e.g. #ffffff
   textMuted: string;   // e.g. #a1a1aa
+  // Font Typography properties
+  fontPresetId?: string;
+  fontDisplay?: string;  // e.g. 'Syne'
+  fontSans?: string;     // e.g. 'Space Grotesk'
+  fontMono?: string;     // e.g. 'JetBrains Mono'
 }
 
 export function hexToRgbSpace(hex: string): string {
@@ -126,7 +131,161 @@ export const THEME_PRESETS: PortfolioTheme[] = [
   },
 ];
 
-export const DEFAULT_THEME = THEME_PRESETS[0];
+export interface FontPreset {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  display: string;   // e.g. 'Syne'
+  sans: string;      // e.g. 'Space Grotesk'
+  mono: string;      // e.g. 'JetBrains Mono'
+}
+
+export const FONT_PRESETS: FontPreset[] = [
+  {
+    id: 'obsidian-tech',
+    name: 'Obsidian Tech (Default)',
+    category: 'High-Impact Neo-Grotesque',
+    description: 'Syne display headings with Space Grotesk body and JetBrains Mono code.',
+    display: 'Syne',
+    sans: 'Space Grotesk',
+    mono: 'JetBrains Mono',
+  },
+  {
+    id: 'clean-enterprise',
+    name: 'Clean Enterprise / SaaS',
+    category: 'Refined Contemporary',
+    description: 'Plus Jakarta Sans headers with Inter body text. Crisp, clean, and corporate.',
+    display: 'Plus Jakarta Sans',
+    sans: 'Inter',
+    mono: 'JetBrains Mono',
+  },
+  {
+    id: 'cyber-futuristic',
+    name: 'Cyberpunk & Sci-Fi',
+    category: 'Futuristic Tech',
+    description: 'Orbitron geometric headings with Space Grotesk body and Fira Code.',
+    display: 'Orbitron',
+    sans: 'Space Grotesk',
+    mono: 'Fira Code',
+  },
+  {
+    id: 'geometric-impact',
+    name: 'Geometric Modern',
+    category: 'Bold & Punchy',
+    description: 'Outfit display with Plus Jakarta Sans body and Space Mono tags.',
+    display: 'Outfit',
+    sans: 'Plus Jakarta Sans',
+    mono: 'Space Mono',
+  },
+  {
+    id: 'executive-editorial',
+    name: 'Executive Editorial',
+    category: 'Prestige & Architectural',
+    description: 'Playfair Display editorial headers paired with clean Inter body prose.',
+    display: 'Playfair Display',
+    sans: 'Inter',
+    mono: 'JetBrains Mono',
+  },
+  {
+    id: 'urban-grotesk',
+    name: 'Urban Grotesque',
+    category: 'Industrial Design',
+    description: 'Montserrat heavyweight display with Space Grotesk body.',
+    display: 'Montserrat',
+    sans: 'Space Grotesk',
+    mono: 'JetBrains Mono',
+  },
+  {
+    id: 'digital-humanist',
+    name: 'Digital Humanist',
+    category: 'Friendly & Polished',
+    description: 'Poppins display headers with Inter body and JetBrains Mono.',
+    display: 'Poppins',
+    sans: 'Inter',
+    mono: 'JetBrains Mono',
+  },
+  {
+    id: 'pure-terminal',
+    name: 'Pure Terminal Code',
+    category: 'Developer Minimalist',
+    description: 'JetBrains Mono for headings and code with Inter for long prose.',
+    display: 'JetBrains Mono',
+    sans: 'Inter',
+    mono: 'JetBrains Mono',
+  },
+];
+
+export const POPULAR_DISPLAY_FONTS = [
+  'Syne',
+  'Plus Jakarta Sans',
+  'Space Grotesk',
+  'Inter',
+  'Orbitron',
+  'Outfit',
+  'Montserrat',
+  'Playfair Display',
+  'Poppins',
+  'JetBrains Mono',
+];
+
+export const POPULAR_SANS_FONTS = [
+  'Space Grotesk',
+  'Inter',
+  'Plus Jakarta Sans',
+  'Roboto',
+  'Open Sans',
+  'Poppins',
+  'Montserrat',
+  'Outfit',
+];
+
+export const POPULAR_MONO_FONTS = [
+  'JetBrains Mono',
+  'Fira Code',
+  'Space Mono',
+  'Roboto Mono',
+  'Inconsolata',
+  'Courier Prime',
+];
+
+export const DEFAULT_THEME: PortfolioTheme = {
+  ...THEME_PRESETS[0],
+  fontPresetId: 'obsidian-tech',
+  fontDisplay: 'Syne',
+  fontSans: 'Space Grotesk',
+  fontMono: 'JetBrains Mono',
+};
+
+export function ensureGoogleFontsLoaded(fonts: string[]): void {
+  if (typeof document === 'undefined') return;
+
+  const validFonts = fonts
+    .filter(Boolean)
+    .map(f => f.trim())
+    .filter(f => !['monospace', 'sans-serif', 'serif', 'system-ui'].includes(f.toLowerCase()));
+
+  if (validFonts.length === 0) return;
+
+  const linkId = 'dynamic-portfolio-google-fonts';
+  let link = document.getElementById(linkId) as HTMLLinkElement | null;
+  if (!link) {
+    link = document.createElement('link');
+    link.id = linkId;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+  }
+
+  const queryFamilies = validFonts.map(f => {
+    const formatted = f.replace(/\s+/g, '+');
+    return `family=${formatted}:wght@400;500;600;700;800;900`;
+  }).join('&');
+
+  const newHref = `https://fonts.googleapis.com/css2?${queryFamilies}&display=swap`;
+  if (link.href !== newHref) {
+    link.href = newHref;
+  }
+}
 
 export function applyThemeToDocument(theme: PortfolioTheme): void {
   if (typeof document === 'undefined') return;
@@ -174,10 +333,23 @@ export function applyThemeToDocument(theme: PortfolioTheme): void {
   root.style.setProperty('--theme-text', text);
   root.style.setProperty('--theme-text-muted', textMuted);
 
+  // Dynamic Typography Font Variables
+  const fontDisplay = theme.fontDisplay || 'Syne';
+  const fontSans = theme.fontSans || 'Space Grotesk';
+  const fontMono = theme.fontMono || 'JetBrains Mono';
+
+  root.style.setProperty('--font-display', `"${fontDisplay}", "Space Grotesk", sans-serif`);
+  root.style.setProperty('--font-sans', `"${fontSans}", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`);
+  root.style.setProperty('--font-mono', `"${fontMono}", monospace`);
+
+  // Dynamically load font files from Google Fonts
+  ensureGoogleFontsLoaded([fontDisplay, fontSans, fontMono]);
+
   // Apply directly to body element
   if (document.body) {
     document.body.style.backgroundColor = `rgb(${bgRgb})`;
     document.body.style.color = `rgb(${textRgb})`;
+    document.body.style.fontFamily = `"${fontSans}", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
   }
 }
 

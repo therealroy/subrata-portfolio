@@ -5,6 +5,9 @@
 @layer base {
   :root {
     color-scheme: dark;
+    --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Syne', 'Space Grotesk', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
     --color-accent: 240 75 32;       /* #F04B20 */
     --color-accent-hover: 217 62 21; /* #D93E15 */
     --color-accent-light: 255 101 61;/* #FF653D */
@@ -29,7 +32,7 @@
   body {
     background-color: rgb(var(--color-bg)) !important;
     color: rgb(var(--color-text)) !important;
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-sans, 'Space Grotesk'), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     overflow-x: hidden;
   }
 
